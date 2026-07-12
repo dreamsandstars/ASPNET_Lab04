@@ -1,0 +1,182 @@
+@model AspNetWeek4.Mvc.ViewModels.DataHealthViewModel
+
+@{
+    ViewData["Title"] = "Data Health Diagnostics";
+}
+
+<div style="margin-bottom: 24px; margin-top: 10px; font-family: var(--font-display); display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px;">
+    <div>
+        <h1 class="page-title" style="font-size: 30px; font-weight: 800; color: var(--color-text-main); margin: 0; letter-spacing: -0.04em; line-height: 1.15;">Diagnostics & System Health</h1>
+        <p style="color: var(--color-text-muted); margin: 6px 0 0 0; font-size: 14.5px;">Monitor database connection metrics, change tracking logs, and administrative controls.</p>
+    </div>
+    <a asp-action="AuditLogs" class="btn pressable-btn" style="background: var(--color-accent); color: white; padding: 10px 18px; border-radius: var(--radius-sm); font-weight: 600; text-decoration: none; font-size: 13.5px; display: inline-flex; align-items: center; gap: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        Audit Log Explorer
+    </a>
+</div>
+
+<!-- Success/Error Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 12px 16px; color: #047857; font-family: var(--font-display); font-size: 13.5px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; flex-shrink: 0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+        </svg>
+        <span>@TempData["SuccessMessage"]</span>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 12px 16px; color: #b91c1c; font-family: var(--font-display); font-size: 13.5px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; flex-shrink: 0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        </svg>
+        <span>@TempData["ErrorMessage"]</span>
+    </div>
+}
+
+<!-- Database Stats Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; font-family: var(--font-display);">
+    <div class="premium-card" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 16px;">
+        <div style="font-size: 10px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Database Status</div>
+        <span class="premium-badge @(Model.IsDatabaseOnline ? "badge-green" : "badge-amber")" style="padding: 4px 10px; font-size: 10px;">
+            <span class="@(Model.IsDatabaseOnline ? "status-pulse-dot" : "status-pulse-dot-red")" style="width: 5px; height: 5px; border-radius: 50%; background: @(Model.IsDatabaseOnline ? "var(--color-success)" : "var(--color-danger)"); display: inline-block;"></span>
+            @(Model.IsDatabaseOnline ? "ONLINE" : "OFFLINE")
+        </span>
+    </div>
+
+    <div class="premium-card" style="text-align: center; padding: 16px;">
+        <div style="font-size: 10px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Categories</div>
+        <div class="tabular-nums" style="font-size: 26px; color: var(--color-text-main); font-weight: 850;">@Model.CategoryCount</div>
+    </div>
+
+    <div class="premium-card" style="text-align: center; padding: 16px;">
+        <div style="font-size: 10px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Courses</div>
+        <div class="tabular-nums" style="font-size: 26px; color: var(--color-text-main); font-weight: 850;">@Model.CourseCount</div>
+    </div>
+
+    <div class="premium-card" style="text-align: center; padding: 16px;">
+        <div style="font-size: 10px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Students</div>
+        <div class="tabular-nums" style="font-size: 26px; color: var(--color-text-main); font-weight: 850;">@Model.StudentCount</div>
+    </div>
+
+    <div class="premium-card" style="text-align: center; padding: 16px;">
+        <div style="font-size: 10px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Enrollments</div>
+        <div class="tabular-nums" style="font-size: 26px; color: var(--color-text-main); font-weight: 850;">@Model.EnrollmentCount</div>
+    </div>
+</div>
+
+<!-- Bento grid for logs & controls -->
+<div class="bento-row" style="font-family: var(--font-display); gap: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+    
+    <!-- Connection & Admin Panel -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Connection Info -->
+        <div class="premium-card">
+            <h3 style="font-size: 16px; font-weight: 800; color: var(--color-text-main); margin: 0 0 16px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; color: var(--color-accent);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582" />
+                </svg>
+                Connection Details
+            </h3>
+            
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 10px; color: var(--color-text-muted); font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase;">Provider</label>
+                <span style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--color-text-main); background: #f8fafc; border: 1px solid #e2e8f0; padding: 2px 6px; border-radius: 4px;">
+                    @Model.DatabaseProvider
+                </span>
+            </div>
+            
+            <div>
+                <label style="font-size: 10px; color: var(--color-text-muted); font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase;">ConnectionString</label>
+                <span style="font-family: var(--font-mono); font-size: 11px; color: #334155; word-break: break-all; background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 10px; border-radius: 6px; display: block; line-height: 1.4;">
+                    @Model.ConnectionString
+                </span>
+            </div>
+        </div>
+
+        <!-- Administrative Controls (Advanced Seeding & Stress Testing Panel) -->
+        <div class="premium-card" style="border-top: 3px solid var(--color-accent);">
+            <h3 style="font-size: 16px; font-weight: 800; color: var(--color-text-main); margin: 0 0 16px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; color: var(--color-accent);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.831a1.125 1.125 0 0 1 .26 1.43l-1.297 2.247a1.125 1.125 0 0 1-1.37.491l-1.216-.456c-.356-.133-.751-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.83c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                Admin Power Tools
+            </h3>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: -8px; margin-bottom: 16px; line-height: 1.4;">
+                Simulate transactional traffic and stress test safety constraints, or hard-reset migrations.
+            </p>
+            
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <form asp-action="SimulateTraffic" method="post" style="margin: 0;">
+                    <button type="submit" class="btn pressable-btn" style="background: #0284c7; color: white; padding: 8px 14px; border-radius: 6px; font-size: 12.5px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        ⚡ Simulate Random Enrollment
+                    </button>
+                </form>
+
+                <form asp-action="ResetDatabase" method="post" style="margin: 0;" onsubmit="return confirm('WARNING: This will delete the database, rebuild schema and seed initial data. Continue?');">
+                    <button type="submit" class="btn pressable-btn" style="background: var(--color-danger); color: white; padding: 8px 14px; border-radius: 6px; font-size: 12.5px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        ♻️ Wreak Reset & Re-Seed
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Migrations Info -->
+    <div class="premium-card">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--color-text-main); margin: 0 0 16px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; color: var(--color-accent);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12" />
+            </svg>
+            Migrations Status
+        </h3>
+        
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 11px; color: var(--color-success); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">Applied Migrations (@Model.AppliedMigrations.Count)</label>
+            @if (!Model.AppliedMigrations.Any())
+            {
+                <span style="font-size: 12.5px; color: var(--color-text-muted); font-style: italic;">None.</span>
+            }
+            else
+            {
+                <div style="background: #0f172a; border-radius: 6px; padding: 10px 14px; border: 1px solid #1e293b; max-height: 150px; overflow-y: auto;">
+                    <ul style="margin: 0; padding-left: 14px; font-family: var(--font-mono); font-size: 11px; color: #38bdf8; line-height: 1.5;">
+                        @foreach (var migration in Model.AppliedMigrations)
+                        {
+                            <li>@migration</li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+        <div>
+            <label style="font-size: 11px; color: @(Model.PendingMigrations.Any() ? "var(--color-warning)" : "var(--color-text-muted)"); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">Pending Migrations (@Model.PendingMigrations.Count)</label>
+            @if (!Model.PendingMigrations.Any())
+            {
+                <span style="font-size: 12px; color: var(--color-success); font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 12px; height: 12px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                    Fully up-to-date
+                </span>
+            }
+            else
+            {
+                <div style="background: #0f172a; border-radius: 6px; padding: 10px 14px; border: 1px solid #1e293b;">
+                    <ul style="margin: 0; padding-left: 14px; font-family: var(--font-mono); font-size: 11px; color: #f97316; line-height: 1.5;">
+                        @foreach (var migration in Model.PendingMigrations)
+                        {
+                            <li>@migration</li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>

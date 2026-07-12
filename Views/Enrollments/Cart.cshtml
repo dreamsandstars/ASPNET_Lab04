@@ -1,0 +1,226 @@
+@{
+    ViewData["Title"] = "Registration Cart";
+}
+
+<div style="margin-bottom: 24px; margin-top: 10px; font-family: var(--font-display); display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h1 class="page-title" style="font-size: 30px; font-weight: 800; color: var(--color-text-main); margin: 0; letter-spacing: -0.04em; line-height: 1.15;">Registration Cart</h1>
+        <p style="color: var(--color-text-muted); margin: 6px 0 0 0; font-size: 14.5px;">Review your selected courses and perform bulk registration checkouts in a single database transaction.</p>
+    </div>
+    <a asp-controller="Courses" asp-action="Index" class="btn btn-light pressable-btn" style="padding: 10px 18px; border-radius: var(--radius-sm); font-weight: 600; text-decoration: none; font-size: 13.5px;">
+        &larr; Browse More Courses
+    </a>
+</div>
+
+<div id="cart-alert" style="display: none; border-radius: 8px; padding: 12px 16px; font-family: var(--font-display); font-size: 13.5px; font-weight: 600; margin-bottom: 20px;"></div>
+
+<div id="cart-container" style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; font-family: var(--font-display);">
+    <!-- Cart Items Column -->
+    <div class="premium-card" style="padding: 24px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--color-text-main); margin: 0 0 16px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Selected Courses</h3>
+        <div id="cart-items-list" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Checkout Info Column -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="premium-card" style="padding: 24px;">
+            <h3 style="font-size: 16px; font-weight: 800; color: var(--color-text-main); margin: 0 0 16px 0; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Student Information</h3>
+            
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 11px; color: var(--color-text-muted); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">Full Name</label>
+                <input type="text" id="student-name" placeholder="e.g. Nguyen Van A" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; outline: none; font-family: var(--font-display);" />
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 11px; color: var(--color-text-muted); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">Email Address</label>
+                <input type="email" id="student-email" placeholder="e.g. student@gmail.com" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; outline: none; font-family: var(--font-display);" />
+            </div>
+
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 16px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="color: var(--color-text-muted); font-size: 14px;">Total Courses</span>
+                    <span id="total-courses-count" style="font-weight: 700; color: var(--color-text-main);">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--color-text-muted); font-size: 14px; font-weight: 750;">Total Cost</span>
+                    <span class="tabular-nums" style="font-size: 20px; font-weight: 850; color: var(--color-accent);">
+                        <span id="total-cost-val">0</span> <span style="font-size: 11px; font-weight: 500; color: var(--color-text-muted);">VND</span>
+                    </span>
+                </div>
+            </div>
+
+            <button onclick="checkoutCart()" class="btn pressable-btn" style="width: 100%; background: var(--color-success); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 800; cursor: pointer;">
+                💳 Complete Bulk Checkout
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="empty-cart-view" style="display: none; padding: 60px 0; text-align: center; font-family: var(--font-display);">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 48px; height: 48px; color: var(--color-text-muted); margin: 0 auto 16px auto; display: block;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+    </svg>
+    <h3 style="font-size: 18px; color: var(--color-text-main); font-weight: 800; margin: 0 0 8px 0;">Your Cart is Empty</h3>
+    <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 20px 0;">Select courses from the catalog list to fill your cart and register.</p>
+    <a asp-controller="Courses" asp-action="Index" class="btn pressable-btn" style="background: var(--color-accent); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13.5px; display: inline-block;">
+        Browse Courses
+    </a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderCart();
+    });
+
+    function getCart() {
+        return JSON.parse(localStorage.getItem("tc_cart") || "[]");
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem("tc_cart", JSON.stringify(cart));
+    }
+
+    function renderCart() {
+        const cart = getCart();
+        const cartContainer = document.getElementById("cart-container");
+        const emptyView = document.getElementById("empty-cart-view");
+        const itemsList = document.getElementById("cart-items-list");
+        
+        if (cart.length === 0) {
+            cartContainer.style.display = "none";
+            emptyView.style.display = "block";
+            updateCartBadge();
+            return;
+        }
+
+        cartContainer.style.display = "grid";
+        emptyView.style.display = "none";
+        itemsList.innerHTML = "";
+
+        let totalCost = 0;
+        let totalCourses = 0;
+
+        cart.forEach((item, index) => {
+            totalCost += item.price * item.quantity;
+            totalCourses += item.quantity;
+
+            const row = document.createElement("div");
+            row.style.cssText = "display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f4f4f5; padding-bottom: 12px;";
+            row.innerHTML = `
+                <div style="flex-grow: 1;">
+                    <div style="font-weight: 700; font-size: 14.5px; color: var(--color-text-main);">${item.name}</div>
+                    <div style="font-size: 12px; color: var(--color-text-muted); margin-top: 2px;">
+                        Unit Price: <span class="tabular-nums">${Number(item.price).toLocaleString()} VND</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-left: 20px;">
+                    <button onclick="changeQty(${index}, -1)" style="width: 24px; height: 24px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: bold;">-</button>
+                    <span class="tabular-nums" style="font-weight: 700; font-size: 14px; width: 20px; text-align: center;">${item.quantity}</span>
+                    <button onclick="changeQty(${index}, 1)" style="width: 24px; height: 24px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: bold;">+</button>
+                    <button onclick="removeFromCart(${index})" style="background: none; border: none; color: var(--color-danger); cursor: pointer; font-size: 12px; margin-left: 12px; font-weight: 700;">Remove</button>
+                </div>
+            `;
+            itemsList.appendChild(row);
+        });
+
+        document.getElementById("total-courses-count").innerText = totalCourses;
+        document.getElementById("total-cost-val").innerText = totalCost.toLocaleString();
+        
+        updateCartBadge();
+    }
+
+    function changeQty(index, delta) {
+        const cart = getCart();
+        cart[index].quantity += delta;
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        saveCart(cart);
+        renderCart();
+    }
+
+    function removeFromCart(index) {
+        const cart = getCart();
+        cart.splice(index, 1);
+        saveCart(cart);
+        renderCart();
+    }
+
+    function updateCartBadge() {
+        const cart = getCart();
+        const badge = document.getElementById("cart-badge");
+        if (badge) {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (count > 0) {
+                badge.innerText = count;
+                badge.style.display = "inline-flex";
+            } else {
+                badge.style.display = "none";
+            }
+        }
+    }
+
+    async function checkoutCart() {
+        const cart = getCart();
+        const studentName = document.getElementById("student-name").value.trim();
+        const studentEmail = document.getElementById("student-email").value.trim();
+        const alertBox = document.getElementById("cart-alert");
+
+        alertBox.style.display = "none";
+
+        if (!studentName || !studentEmail) {
+            showAlert("Full Name and Email Address are required.", false);
+            return;
+        }
+
+        const items = cart.map(item => ({
+            courseId: item.id,
+            courseName: item.name,
+            quantity: item.quantity,
+            price: item.price
+        }));
+
+        const payload = {
+            studentName: studentName,
+            studentEmail: studentEmail,
+            items: items
+        };
+
+        try {
+            const response = await fetch("@Url.Action("CheckoutCart", "Enrollments")", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                localStorage.removeItem("tc_cart");
+                window.location.href = result.redirectUrl;
+            } else {
+                showAlert("Checkout failed! " + result.message, false);
+            }
+        } catch (ex) {
+            showAlert("An error occurred during checkout.", false);
+        }
+    }
+
+    function showAlert(message, isSuccess) {
+        const alertBox = document.getElementById("cart-alert");
+        alertBox.style.display = "block";
+        alertBox.innerText = message;
+        if (isSuccess) {
+            alertBox.style.background = "#ecfdf5";
+            alertBox.style.border = "1px solid #10b981";
+            alertBox.style.color = "#047857";
+        } else {
+            alertBox.style.background = "#fef2f2";
+            alertBox.style.border = "1px solid #ef4444";
+            alertBox.style.color = "#b91c1c";
+        }
+    }
+</script>

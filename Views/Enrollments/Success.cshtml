@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Enrollment Successful";
+}
+
+<div style="max-width: 500px; margin: 60px auto; font-family: var(--font-display);">
+    <div class="premium-card" style="padding: 48px 36px; text-align: center;">
+        
+        <div style="background: #ecfdf5; width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto; color: var(--color-success); border: 1px solid #a7f3d0;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 32px; height: 32px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+        </div>
+        
+        <h1 style="font-size: 28px; font-weight: 800; color: var(--color-text-main); margin-bottom: 12px; letter-spacing: -0.03em;">Enrollment Completed!</h1>
+        
+        <p style="color: var(--color-text-muted); line-height: 1.6; font-size: 14.5px; margin-bottom: 32px; padding: 0 10px;">
+            The student account has been registered, enrollment records created, and class capacity updated successfully within a secure database transaction.
+        </p>
+
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <a asp-controller="Courses" asp-action="Index" class="btn pressable-btn" style="padding: 10px 20px; font-size: 13.5px; background: var(--color-accent); color: white; text-decoration: none; border-radius: var(--radius-sm); font-weight: 600;">Browse Courses</a>
+            <a asp-controller="Enrollments" asp-action="History" class="btn btn-light pressable-btn" style="padding: 10px 20px; font-size: 13.5px; text-decoration: none; border-radius: var(--radius-sm); font-weight: 600; display: inline-flex; align-items: center; justify-content: center;">Enrollment History</a>
+        </div>
+    </div>
+</div>

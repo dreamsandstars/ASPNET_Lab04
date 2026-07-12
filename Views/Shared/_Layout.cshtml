@@ -1,0 +1,74 @@
+@{
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Mini Training Center</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <div class="brand">
+                <a asp-controller="Home" asp-action="Index" style="font-family: var(--font-display); font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+                    🎓 Training Center
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a asp-controller="Home" asp-action="Index" class="@(currentController == "Home" && currentAction == "Index" ? "active" : "")" style="font-family: var(--font-display);">Home</a>
+                <a asp-controller="Courses" asp-action="Index" class="@(currentController == "Courses" && currentAction == "Index" ? "active" : "")" style="font-family: var(--font-display);">Courses</a>
+                <a asp-controller="CourseCategories" asp-action="Index" class="@(currentController == "CourseCategories" ? "active" : "")" style="font-family: var(--font-display);">Categories</a>
+                <a asp-controller="Courses" asp-action="Filter" class="@(currentController == "Courses" && currentAction == "Filter" ? "active" : "")" style="font-family: var(--font-display);">Filter Courses</a>
+                <a asp-controller="Enrollments" asp-action="Create" class="@(currentController == "Enrollments" && currentAction == "Create" ? "active" : "")" style="font-family: var(--font-display);">Register</a>
+                <a asp-controller="Enrollments" asp-action="History" class="@(currentController == "Enrollments" && currentAction == "History" ? "active" : "")" style="font-family: var(--font-display);">History</a>
+                <a asp-controller="Enrollments" asp-action="Cart" class="@(currentController == "Enrollments" && currentAction == "Cart" ? "active" : "")" style="font-family: var(--font-display); display: inline-flex; align-items: center; gap: 6px;">
+                    Cart
+                    <span id="cart-badge" style="background: var(--color-danger); color: white; border-radius: 50%; font-size: 10px; width: 16px; height: 16px; display: none; align-items: center; justify-content: center; font-weight: bold; margin-left: 2px;">0</span>
+                </a>
+                <a asp-controller="DataHealth" asp-action="Index" class="@(currentController == "DataHealth" ? "active" : "")" style="font-family: var(--font-display);">Data Health</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        @RenderBody()
+    </main>
+
+    @if (!(currentController == "Home" && currentAction == "Index"))
+    {
+        <footer class="site-footer">
+            <div class="container footer-content" style="font-family: var(--font-display);">
+                <span>&copy; 2026 - Mini Training Center - ASP.NET Core MVC Data Layer Upgrade</span>
+                <a href="mailto:support@trainingcenter.edu.vn" style="color: var(--color-accent); font-weight: 500;">support@trainingcenter.edu.vn</a>
+            </div>
+        </footer>
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            updateGlobalCartBadge();
+        });
+        function updateGlobalCartBadge() {
+            try {
+                const cart = JSON.parse(localStorage.getItem("tc_cart") || "[]");
+                const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+                const badge = document.getElementById("cart-badge");
+                if (badge) {
+                    if (count > 0) {
+                        badge.innerText = count;
+                        badge.style.display = "inline-flex";
+                    } else {
+                        badge.style.display = "none";
+                    }
+                }
+            } catch (ex) {}
+        }
+    </script>
+</body>
+</html>

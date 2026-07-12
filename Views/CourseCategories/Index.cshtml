@@ -1,0 +1,82 @@
+@model IEnumerable<AspNetWeek4.Mvc.ViewModels.CourseCategoryListItemViewModel>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div style="max-width: 900px; margin: 0 auto; padding: 0 15px; font-family: var(--font-display);">
+    <!-- Title & Header -->
+    <div style="margin-bottom: 24px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 class="page-title" style="font-size: 28px; font-weight: 800; color: var(--color-text-main); margin: 0; letter-spacing: -0.03em;">Training Sectors</h1>
+            <p style="color: var(--color-text-muted); margin: 6px 0 0 0; font-size: 13.5px;">
+                @Model.Count() sectors &bull; @Model.Sum(c => c.CourseCount) active courses
+            </p>
+        </div>
+        <div>
+            <a asp-controller="Courses" asp-action="Index" class="btn btn-light pressable-btn" style="padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); text-decoration: none;">
+                Browse Courses
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Card Container -->
+    <div class="minimalist-table-wrapper">
+        <table class="minimalist-table">
+            <thead>
+                <tr style="font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase;">
+                    <th style="width: 18%;">ID</th>
+                    <th style="width: 47%;">SECTOR NAME</th>
+                    <th style="width: 20%; text-align: center;">COURSES</th>
+                    <th style="width: 15%; text-align: right;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" style="padding: 40px; text-align: center; color: var(--color-text-muted); font-size: 14px;">
+                            No categories found.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var cat in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--color-text-muted);">
+                                    #CAT-@cat.Id.ToString("D3")
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="background: #e0f2fe; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #0369a1; flex-shrink: 0;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+                                        </svg>
+                                    </div>
+                                    <span style="font-weight: 700; color: var(--color-text-main); font-size: 14px;">@cat.Name</span>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="premium-badge badge-indigo">
+                                    @cat.CourseCount active
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a asp-controller="Courses" asp-action="Filter" asp-route-categoryId="@cat.Id" class="btn btn-light pressable-btn" style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; text-decoration: none;">
+                                    View
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 11px; height: 11px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

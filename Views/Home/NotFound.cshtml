@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Không tìm thấy trang - 404";
+}
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
+    <div style="font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">🔍</div>
+    
+    <h1 style="font-size: 36px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">404 - Không tìm thấy trang</h1>
+    
+    <p style="font-size: 16px; color: #64748b; max-width: 500px; line-height: 1.6; margin-bottom: 30px;">
+        Đường dẫn bạn truy cập không tồn tại hoặc đã được thay đổi sang nghiệp vụ Quản lý Sách (<code>/Books</code>). Vui lòng quay lại trang chủ hoặc truy cập danh mục.
+    </p>
+
+    <div style="display: flex; gap: 12px; justify-content: center;">
+        <a class="btn" asp-controller="Home" asp-action="Index" style="padding: 10px 20px;">
+            🏠 Về Trang Chủ
+        </a>
+        <a class="btn btn-secondary" asp-controller="Books" asp-action="Index" style="padding: 10px 20px;">
+            📚 Danh Mục Sách
+        </a>
+    </div>
+</div>
+
+<style>
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+</style>
